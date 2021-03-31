@@ -1,0 +1,121 @@
+#test program that has no syntax error
+
+
+function int readStats(){
+     log("Speed: X: ");
+     log(ReadSpeedX());
+     log("\nSpeed: Y: ");
+     log(ReadSpeedY());
+     log("\nSpeed: Z: ");
+     log(ReadSpeedZ());  
+     log("\nIncline is: ");
+     log(ReadIncline());
+     log(" Altitude is: ");
+     log(ReadAltitude());
+     log("Temperature is: ");
+     log(ReadTemperature());
+
+     return 1;
+};
+
+
+Connect(178.142.452.521, 4563);
+
+SetSpeedY(5.0);
+Rise(10.0);
+MoveForward(10.0);
+
+int x = 0;
+float r = 0;
+boolean batteryLow = false;
+
+TurnOnCamera();
+StartTimer();
+
+if( ReadBattery() <= 20){
+      batteryLow = true;
+};
+
+SetSpeed(2.0, 2.0, 2.0);
+StartVideo();
+
+while(batteryLow == false){
+
+   for(int i = 0; i < 10; i = i + 1){ 
+	
+      FollowCurve("r ^ 2 = y ^ 2 + x ^ 2");
+      r = r + 0.5;
+      x = x + 1;
+      log(" r increased 0.5, r: " );
+      log(r);
+
+      if( ReadBattery() <= 15){
+        batteryLow = true;
+      };
+   
+     log("Location is: ");
+     log(ReadLocation());
+     RotateLeft(360.0);
+     Wait(5.0);	
+     RotateRight(360.0);
+
+   };
+	
+};
+
+if( x == 10){
+   log("Circular Video Completed.\n" );
+   StopVideo();
+
+   if(SaveMedia() == true){
+      log("video saved");
+   }
+   else{
+      log("storage full");
+   };
+
+};
+
+boolean answer = false;
+
+log("follow new curve? false/true\n");
+scan(answer);
+
+while(batteryLow == false && answer == true){
+
+     log("please enter curve to follow: ");
+     string newCurve;
+     scan(newCurve);
+
+     FollowCurve(newCurve);
+
+    if( ReadBattery() <= 15){
+        batteryLow = true;
+     };
+
+     if (batteryLow != true){
+	 Wait(1.0);
+         TakePicture();
+         if(SaveMedia() == true){
+      		log("video saved");
+  	 }
+  	 else{
+     		log("storage full");
+  	 };
+
+         log("follow new curve? false/true\n");
+         scan(answer);
+     };
+
+};
+
+
+StopTimer();
+
+Descent(10.0);
+
+log("\nTime taken: ");
+log(ReadFromTimer());
+
+TurnOffCamera();
+Disconnect();
